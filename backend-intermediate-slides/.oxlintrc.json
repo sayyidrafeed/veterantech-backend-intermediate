@@ -1,0 +1,17 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["typescript", "react", "jsx-a11y"],
+  "categories": {
+    "correctness": "error",
+    "suspicious": "warn"
+  },
+  "rules": {
+    "react/react-in-jsx-scope": "off"
+  },
+  "ignorePatterns": [".agents/**", ".claude/**", "slides/getting-started/**"],
+  "env": {
+    "builtin": true,
+    "browser": true,
+    "es2022": true
+  }
+}

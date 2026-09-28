@@ -1,0 +1,14 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "printWidth": 80,
+  "sortImports": true,
+  "ignorePatterns": [
+    ".agents/**",
+    ".claude/**",
+    "AGENTS.md",
+    "README.md",
+    "netlify.toml",
+    "open-slide.config.ts",
+    "slides/getting-started/**"
+  ]
+}
