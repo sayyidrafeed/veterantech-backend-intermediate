@@ -1,0 +1,46 @@
+name: veterantech-p03-compose
+
+services:
+  api:
+    build: ./api
+    image: veterantech-api-compose-p03:1
+    environment:
+      PORT: "3000"
+      PGHOST: db
+      PGPORT: "5432"
+      PGUSER: ${POSTGRES_USER:-demo}
+      PGDATABASE: ${POSTGRES_DB:-classroom}
+      PGPASSWORD: ${POSTGRES_PASSWORD:?Jalankan node setup-env.mjs dahulu}
+    ports:
+      - "127.0.0.1:${API_HOST_PORT:-8085}:3000"
+    networks: [app-net]
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 3s
+      timeout: 5s
+      retries: 20
+
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-demo}
+      POSTGRES_DB: ${POSTGRES_DB:-classroom}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Jalankan node setup-env.mjs dahulu}
+    networks: [app-net]
+    volumes:
+      - db-data:/var/lib/postgresql/data
+      - ./db/init.sql:/docker-entrypoint-initdb.d/01-notes.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U \"$$POSTGRES_USER\" -d \"$$POSTGRES_DB\""]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+networks:
+  app-net: {}
+
+volumes:
+  db-data: {}

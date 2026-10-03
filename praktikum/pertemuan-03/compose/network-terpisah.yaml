@@ -1,0 +1,6 @@
+services:
+  api:
+    networks: !override [isolated-net]
+
+networks:
+  isolated-net: {}
