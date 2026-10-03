@@ -5,19 +5,21 @@ Slides as React components. Each slide lives under `slides/<id>/index.tsx` and d
 ## Getting started
 
 ```bash
-bun install
+bun install --frozen-lockfile
 bun run dev
 ```
 
 Then open the dev server and edit `slides/getting-started/index.tsx`, or create a new slide at `slides/<your-slide>/index.tsx`.
 
+The OpenSlide scripts explicitly use `bun run --bun` so the CLI and its dev-server child run on Bun, even though the upstream executable has a Node shebang. Bun remains the package manager; Vite remains the bundler.
+
 ## Scripts
 
 | Command | Description |
 | --- | --- |
-| `pnpm dev` | Start the dev server with hot reload. |
-| `pnpm build` | Build a static bundle you can deploy. |
-| `pnpm preview` | Preview the built bundle locally. |
+| `bun run dev` | Start the dev server with hot reload. |
+| `bun run build` | Build a static bundle you can deploy. |
+| `bun run preview` | Preview the built bundle locally. |
 
 ## Authoring a slide
 
