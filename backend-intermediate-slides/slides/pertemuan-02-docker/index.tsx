@@ -1978,7 +1978,7 @@ docker ps`}</Code>
 const PrepProject: Page = () => (
   <Shell>
     <Eyebrow>Mentor Prep · 01</Eyebrow>
-    <Heading>Buat folder proyek dan manifest npm</Heading>
+    <Heading>Starter Express sudah siap dipakai</Heading>
     <div
       style={{
         display: "grid",
@@ -1988,26 +1988,26 @@ const PrepProject: Page = () => (
         alignItems: "start",
       }}
     >
-      <Code size={24}>{`mkdir api-kelas
-cd api-kelas
-npm init -y
-npm install express
-npm pkg set scripts.start="node server.js"`}</Code>
+      <Code size={23}>{`# dari root workspace Backend Inter
+cd praktikum/pertemuan-02-docker/api-kelas
+npm ci
+npm start`}</Code>
       <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
         <Body>
-          Setelah install, folder berisi `package.json`, `package-lock.json`,
-          dan `node_modules/`.
+          Folder sudah berisi `server.js`, `package.json`, `package-lock.json`,
+          `Dockerfile`, dan `.dockerignore`.
         </Body>
         <div style={{ padding: 26, background: colors.silk }}>
           <Label>Yang dikomit</Label>
           <Body style={{ marginTop: 10 }}>
-            `package.json` + `package-lock.json`; `node_modules/` tidak dikirim
-            ke image.
+            Source, manifest, lockfile, dan Dockerfile. `node_modules/` tetap
+            lokal dan tidak dikirim ke image.
           </Body>
         </div>
         <Body>
-          Buat file `server.js` di editor. Langkah ini memakai Express yang
-          familier dari Backend Basic.
+          Jika ingin menunjukkan proses dari nol, jelaskan `npm init -y`, `npm
+          install express`, lalu script `start`. Demo utama tinggal memakai
+          starter.
         </Body>
       </div>
     </div>
@@ -2039,7 +2039,8 @@ app.get("/health", (_req, res) => {
   res.json({ status: "ok", service: "api-kelas" });
 });
 
-app.listen(port, "0.0.0.0", () => {
+app.listen(port, "0.0.0.0", (error) => {
+  if (error) throw error;
   console.log("API listening on " + port);
 });`}</Code>
       <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
@@ -2080,8 +2081,9 @@ const PrepManifest: Page = () => (
 }`}</Code>
       <div style={{ display: "flex", flexDirection: "column", gap: 22 }}>
         <Body>
-          `npm pkg set` menambah script start. `npm install express` menambahkan
-          dependency dan versinya ke manifest.
+          Saat merakit sendiri, `npm pkg set` menambah script start dan `npm
+          install express` menambah dependency. Starter ini sudah menyimpan
+          keduanya.
         </Body>
         <Code size={22}>{`# install saat mengembangkan
 npm install
@@ -2158,8 +2160,8 @@ const PrepIgnore: Page = () => (
 coverage`}</Code>
       <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
         <Body>
-          Simpan daftar ini sebagai `.dockerignore` di root proyek, berdampingan
-          dengan Dockerfile.
+          Daftar ini sudah ada sebagai `.dockerignore` di root starter,
+          berdampingan dengan Dockerfile.
         </Body>
         <Body>
           Docker mengirim build context ke daemon. Tanpa ignore, `node_modules/`
@@ -2515,6 +2517,734 @@ const PrepRunOfShow: Page = () => (
   </Shell>
 );
 
+const PrepOneDivider: Page = () => (
+  <Shell>
+    <div
+      style={{
+        height: "100%",
+        display: "grid",
+        gridTemplateColumns: "1.1fr 0.9fr",
+        gap: 64,
+        alignItems: "center",
+      }}
+    >
+      <div>
+        <Eyebrow>Mentor Prep · Pertemuan 1 · Read Only</Eyebrow>
+        <Heading size={86}>Praktikum Linux, SSH, dan firewall</Heading>
+        <Body style={{ maxWidth: 1000, marginTop: 28 }}>
+          Appendix mentor untuk demo VPS yang sudah dipakai. Lewati bagian ini
+          saat menampilkan materi Docker.
+        </Body>
+      </div>
+      <div style={{ padding: 42, background: colors.silk }}>
+        <Label>Alur demo</Label>
+        <Body style={{ marginTop: 18 }}>
+          Siapkan key di Mac → uji SSH → jelajah CLI → inspeksi port dan UFW.
+        </Body>
+        <Body style={{ marginTop: 28 }}>
+          Perubahan file hanya di direktori sementara. Aturan firewall di VPS
+          ini tidak diubah.
+        </Body>
+      </div>
+    </div>
+  </Shell>
+);
+
+const PrepOneKeyModel: Page = () => (
+  <Shell>
+    <Eyebrow>Mentor Prep · Pertemuan 1 · SSH key</Eyebrow>
+    <Heading size={68}>Dua kunci untuk login, satu identitas server</Heading>
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns: "1fr 1fr",
+        gap: 42,
+        marginTop: 42,
+      }}
+    >
+      <div style={{ padding: 30, background: colors.silk }}>
+        <Label>Di Mac mentor · private key</Label>
+        <Body style={{ marginTop: 12 }}>
+          File tanpa akhiran `.pub`. Tetap di perangkatmu; dilindungi
+          passphrase. Jangan kirim, unggah, atau tampilkan isinya.
+        </Body>
+      </div>
+      <div style={{ padding: 30, background: colors.silk }}>
+        <Label>Di akun VPS · public key</Label>
+        <Body style={{ marginTop: 12 }}>
+          File berakhiran `.pub` disalin ke `~/.ssh/authorized_keys` milik user
+          yang akan login.
+        </Body>
+      </div>
+    </div>
+    <Body style={{ marginTop: 30, maxWidth: 1450 }}>
+      Host key adalah identitas VPS, berbeda dari pasangan key milikmu.
+      Fingerprint host key perlu dicek sebelum mempercayai koneksi pertama atau
+      menerima peringatan bahwa identitas server berubah.
+    </Body>
+  </Shell>
+);
+
+const PrepOnePasswordFlow: Page = () => (
+  <Shell>
+    <Eyebrow>Mentor Prep · Pertemuan 1 · Alur dari password</Eyebrow>
+    <Heading size={68}>Password VPS dan passphrase key berbeda</Heading>
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns: "1fr 1fr",
+        gap: 26,
+        marginTop: 40,
+      }}
+    >
+      <div style={{ padding: 24, background: colors.silk }}>
+        <Label>1 · Login yang sekarang</Label>
+        <Body style={{ marginTop: 8 }}>
+          `ssh user@IP` meminta password akun VPS. Ini jalur masuk yang sudah
+          kamu punya.
+        </Body>
+      </div>
+      <div style={{ padding: 24, background: colors.silk }}>
+        <Label>2 · Generate key di Mac</Label>
+        <Body style={{ marginTop: 8 }}>
+          `ssh-keygen` membuat dua file. Passphrase mengunci private key di Mac;
+          ini bukan password akun VPS.
+        </Body>
+      </div>
+      <div style={{ padding: 24, background: colors.silk }}>
+        <Label>3 · Pasang public key</Label>
+        <Body style={{ marginTop: 8 }}>
+          `ssh-copy-id` menggunakan login lama. Saat diminta, masukkan password
+          akun VPS untuk menambahkan public key.
+        </Body>
+      </div>
+      <div style={{ padding: 24, background: colors.silk }}>
+        <Label>4 · Tes login baru</Label>
+        <Body style={{ marginTop: 8 }}>
+          Uji key saja dari terminal kedua. Jika key diterima, yang diminta
+          hanya passphrase lokal, bukan password VPS.
+        </Body>
+      </div>
+    </div>
+    <Body style={{ marginTop: 24, fontSize: 30 }}>
+      Prompt “passphrase for key” membuka file di Mac; prompt “user@host&apos;s
+      password” meminta password akun VPS.
+    </Body>
+  </Shell>
+);
+
+const PrepOnePreflight: Page = () => (
+  <Shell>
+    <Eyebrow>Mentor Prep · Pertemuan 1 · Sebelum kelas</Eyebrow>
+    <Heading size={68}>Siapkan akses tanpa menaruh rahasia di slide</Heading>
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns: "0.95fr 1.05fr",
+        gap: 48,
+        marginTop: 42,
+        alignItems: "start",
+      }}
+    >
+      <Code size={24}>{`# isi di terminal mentor, bukan di source slide
+SSH_USER="<USER>"
+SSH_HOST="<HOST>"
+SSH_PORT="<PORT_SSH>"
+SSH_KEY="$HOME/.ssh/veterantech-mentor"`}</Code>
+      <div style={{ display: "flex", flexDirection: "column", gap: 22 }}>
+        <Body>
+          Ganti user, host, dan port sesuai akses yang sah. Path key khusus ini
+          ada di Mac, bukan di VPS; cek dulu sebelum membuat file baru.
+        </Body>
+        <Body>
+          Kamu sudah bisa login lewat password akun VPS. Itu jalur untuk
+          memasang public key; laptop tidak bisa memberi akses sendiri.
+        </Body>
+        <Body>
+          Jangan tutup sesi SSH lama sampai key baru berhasil di sesi kedua.
+          Ketahui jalur console provider bila akses SSH bermasalah.
+        </Body>
+      </div>
+    </div>
+  </Shell>
+);
+
+const PrepOneKeyCheck: Page = () => (
+  <Shell>
+    <Eyebrow>Mentor Prep · Pertemuan 1 · 01 · Di Mac</Eyebrow>
+    <Heading size={68}>Cek apakah pasangan key sudah ada</Heading>
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns: "0.95fr 1.05fr",
+        gap: 48,
+        marginTop: 42,
+        alignItems: "start",
+      }}
+    >
+      <Code size={23}>{`ls -ld "$HOME/.ssh"
+ls -l "$SSH_KEY" "$SSH_KEY.pub"
+ssh-keygen -lf "$SSH_KEY.pub"`}</Code>
+      <div style={{ display: "flex", flexDirection: "column", gap: 22 }}>
+        <Body>
+          Jalankan di Terminal Mac. Jika kedua file ada, lihat fingerprint
+          public key lalu pakai pasangan itu; jangan menimpa private key lama.
+        </Body>
+        <Body>
+          Jika kedua file belum ada, lanjut ke halaman generate. Jika hanya
+          salah satu yang ada, berhenti dan periksa dulu sebelum membuat nama
+          file yang sama.
+        </Body>
+        <Body>
+          `ls` dan fingerprint aman untuk pengecekan; jangan menjalankan `cat
+          "$SSH_KEY"` karena itu akan menampilkan private key.
+        </Body>
+      </div>
+    </div>
+  </Shell>
+);
+
+const PrepOneKeyGenerate: Page = () => (
+  <Shell>
+    <Eyebrow>Mentor Prep · Pertemuan 1 · 02 · Di Mac</Eyebrow>
+    <Heading size={68}>Buat key baru tanpa menimpa yang lama</Heading>
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns: "1.05fr 0.95fr",
+        gap: 44,
+        marginTop: 42,
+        alignItems: "start",
+      }}
+    >
+      <Code size={22}>{`mkdir -p "$HOME/.ssh"
+chmod 700 "$HOME/.ssh"
+ssh-keygen -t ed25519 -f "$SSH_KEY" \\
+  -C "mentor-vps"
+ls -l "$SSH_KEY" "$SSH_KEY.pub"
+ssh-keygen -lf "$SSH_KEY.pub"`}</Code>
+      <div style={{ display: "flex", flexDirection: "column", gap: 22 }}>
+        <Body>
+          Jalankan hanya jika path tujuan belum ada. Saat diminta passphrase,
+          buat yang kuat dan simpan di password manager; jangan kosongkan.
+        </Body>
+        <Body>
+          Expected: dua file dengan nama dasar sama. File tanpa `.pub` adalah
+          private key; file `.pub` adalah public key.
+        </Body>
+        <Body>
+          Jika muncul pertanyaan untuk overwrite, jawab tidak. Ganti nama
+          `SSH_KEY`, lalu ulangi.
+        </Body>
+      </div>
+    </div>
+  </Shell>
+);
+
+const PrepOneKeyStore: Page = () => (
+  <Shell>
+    <Eyebrow>Mentor Prep · Pertemuan 1 · 03 · Di Mac</Eyebrow>
+    <Heading size={68}>Simpan private key di Mac, bukan di deck</Heading>
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns: "0.95fr 1.05fr",
+        gap: 48,
+        marginTop: 42,
+        alignItems: "start",
+      }}
+    >
+      <Code size={23}>{`chmod 600 "$SSH_KEY"
+chmod 644 "$SSH_KEY.pub"
+ls -l "$SSH_KEY" "$SSH_KEY.pub"`}</Code>
+      <div style={{ display: "flex", flexDirection: "column", gap: 22 }}>
+        <Body>
+          Expected: hanya pemilik yang bisa membaca private key. Public key
+          boleh dibaca dan disalin untuk diberi akses ke akun VPS.
+        </Body>
+        <Body>
+          Simpan passphrase di password manager. Jika membuat backup private
+          key, gunakan penyimpanan terenkripsi yang kamu kuasai; jangan taruh di
+          repo, slide, chat, atau folder berbagi biasa.
+        </Body>
+        <Body>
+          Private key atau passphrase yang hilang tidak bisa dipulihkan dari
+          public key. Kamu perlu membuat pasangan baru lewat akses cadangan.
+        </Body>
+      </div>
+    </div>
+  </Shell>
+);
+
+const PrepOneHostVerify: Page = () => (
+  <Shell>
+    <Eyebrow>Mentor Prep · Pertemuan 1 · 04 · Identitas VPS</Eyebrow>
+    <Heading size={68}>Cocokkan fingerprint server sebelum lanjut</Heading>
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns: "1fr 1fr",
+        gap: 44,
+        marginTop: 42,
+        alignItems: "start",
+      }}
+    >
+      <div>
+        <Label>Di console VPS atau lewat admin</Label>
+        <Code
+          size={21}
+        >{`ssh-keygen -lf /etc/ssh/ssh_host_ed25519_key.pub`}</Code>
+      </div>
+      <div style={{ display: "flex", flexDirection: "column", gap: 22 }}>
+        <Body>
+          Bandingkan fingerprint host key dari sumber tepercaya dengan prompt
+          SSH di Mac. Jika server memakai jenis host key lain, cocokkan jenis
+          yang benar, bukan angka yang kebetulan mirip.
+        </Body>
+        <Body>
+          Jika ada peringatan “host identification has changed”, berhenti.
+          Verifikasi perubahan lewat admin atau provider sebelum menyentuh
+          `known_hosts`.
+        </Body>
+      </div>
+    </div>
+  </Shell>
+);
+
+const PrepOneKeyInstall: Page = () => (
+  <Shell>
+    <Eyebrow>Mentor Prep · Pertemuan 1 · 05 · Public key</Eyebrow>
+    <Heading size={68}>Pasang public key lewat akses yang sudah ada</Heading>
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns: "1.05fr 0.95fr",
+        gap: 44,
+        marginTop: 42,
+        alignItems: "start",
+      }}
+    >
+      <Code size={21}>{`# Jalankan di Mac, setelah host diverifikasi
+ssh-copy-id -i "$SSH_KEY.pub" \\
+  -p "$SSH_PORT" "$SSH_USER@$SSH_HOST"`}</Code>
+      <div style={{ display: "flex", flexDirection: "column", gap: 22 }}>
+        <Body>
+          Perintah ini login dengan akses lama, lalu menambahkan hanya public
+          key ke `authorized_keys` user tujuan. Masukkan password akun VPS saat
+          diminta.
+        </Body>
+        <Body>
+          Expected: pesan bahwa satu key ditambahkan, atau bahwa key sudah
+          tersedia. Jangan lanjut mengubah pengaturan SSH server.
+        </Body>
+        <Body>
+          Jika login password gagal, berhenti. Jangan ubah konfigurasi server;
+          pulihkan akses lama lewat admin atau console provider dahulu.
+        </Body>
+      </div>
+    </div>
+  </Shell>
+);
+
+const PrepOneConnect: Page = () => (
+  <Shell>
+    <Eyebrow>Mentor Prep · Pertemuan 1 · 06 · Uji login</Eyebrow>
+    <Heading size={68}>Tes key baru di sesi SSH kedua</Heading>
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns: "1.05fr 0.95fr",
+        gap: 44,
+        marginTop: 42,
+        alignItems: "start",
+      }}
+    >
+      <Code size={20}>{`ssh -o IdentitiesOnly=yes \\
+  -o PreferredAuthentications=publickey \\
+  -o PasswordAuthentication=no \\
+  -o KbdInteractiveAuthentication=no \\
+  -i "$SSH_KEY" -p "$SSH_PORT" \\
+  "$SSH_USER@$SSH_HOST"
+
+# setelah masuk VPS
+whoami
+hostname
+pwd`}</Code>
+      <div style={{ display: "flex", flexDirection: "column", gap: 22 }}>
+        <Body>
+          Biarkan sesi lama terbuka. Opsi di kiri memaksa pembuktian dengan
+          private key yang dipilih, tanpa fallback ke password akun.
+        </Body>
+        <Body>
+          Expected: boleh muncul prompt passphrase key, lalu `whoami`
+          menampilkan user tujuan. Prompt password akun berarti tes belum
+          membuktikan login key.
+        </Body>
+        <Body>
+          Jika gagal, kembali ke sesi lama untuk mengecek user, public key, dan
+          izin `~/.ssh/authorized_keys`; jangan matikan login lama.
+        </Body>
+      </div>
+    </div>
+  </Shell>
+);
+
+const PrepOneKeyRecovery: Page = () => (
+  <Shell>
+    <Eyebrow>Mentor Prep · Pertemuan 1 · 07 · Kalau gagal</Eyebrow>
+    <Heading size={68}>Jaga satu jalur masuk yang sudah terbukti</Heading>
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns: "1fr 1fr",
+        gap: 42,
+        marginTop: 38,
+      }}
+    >
+      <div style={{ padding: 24, background: colors.silk }}>
+        <Label>Key ditolak</Label>
+        <Body style={{ marginTop: 8 }}>
+          Cek user, port, pasangan key, dan izin `authorized_keys` dari sesi
+          lama. Server yang mewajibkan dua metode juga perlu diperiksa. Jangan
+          ubah firewall untuk error autentikasi.
+        </Body>
+      </div>
+      <div style={{ padding: 24, background: colors.silk }}>
+        <Label>Private key atau passphrase hilang</Label>
+        <Body style={{ marginTop: 8 }}>
+          Pakai akses lama/console untuk memasang public key baru. Setelah login
+          baru berhasil, cabut key yang hilang dari server.
+        </Body>
+      </div>
+      <div style={{ padding: 24, background: colors.silk }}>
+        <Label>Host key berubah</Label>
+        <Body style={{ marginTop: 8 }}>
+          Berhenti dan verifikasi identitas VPS lewat provider/admin. Jangan
+          hapus entri `known_hosts` hanya untuk menghilangkan pesan.
+        </Body>
+      </div>
+      <div style={{ padding: 24, background: colors.silk }}>
+        <Label>Password VPS lupa / SSH terkunci</Label>
+        <Body style={{ marginTop: 8 }}>
+          Pakai sesi cadangan. Jika tak ada sesi yang aktif, minta
+          admin/provider memulihkan akun atau akses jaringan lewat console.
+        </Body>
+      </div>
+    </div>
+  </Shell>
+);
+
+const PrepOneNavigate: Page = () => (
+  <Shell>
+    <Eyebrow>Mentor Prep · Pertemuan 1 · 08 · Linux CLI</Eyebrow>
+    <Heading size={68}>Baca lingkungan server tanpa mengubahnya</Heading>
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns: "0.95fr 1.05fr",
+        gap: 48,
+        marginTop: 42,
+        alignItems: "start",
+      }}
+    >
+      <Code size={25}>{`pwd
+ls -la
+cd /etc
+pwd
+ls -ld ssh
+cd -`}</Code>
+      <div style={{ display: "flex", flexDirection: "column", gap: 22 }}>
+        <Body>
+          `pwd` menjawab “di mana saya”; `ls -la` menampilkan isi direktori
+          termasuk file tersembunyi. `cd -` kembali ke lokasi sebelumnya.
+        </Body>
+        <Body>
+          Expected: setelah `cd /etc`, `pwd` menampilkan `/etc`; baris `ssh`
+          menunjukkan direktori konfigurasi, bukan perintah untuk mengeditnya.
+        </Body>
+        <Body>
+          Bila `ls -ld ssh` gagal, cek hasil `pwd` dan nama direktori. Tidak
+          semua server punya layout yang identik.
+        </Body>
+      </div>
+    </div>
+  </Shell>
+);
+
+const PrepOneScratch: Page = () => (
+  <Shell>
+    <Eyebrow>Mentor Prep · Pertemuan 1 · 09 · File sementara</Eyebrow>
+    <Heading size={68}>Latihan tulis file di ruang demo sendiri</Heading>
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns: "1.05fr 0.95fr",
+        gap: 44,
+        marginTop: 40,
+        alignItems: "start",
+      }}
+    >
+      <Code size={23}>{`demo_dir=$(mktemp -d /tmp/mentor-cli.XXXXXX)
+printf 'Halo dari VPS\\n' > "$demo_dir/catatan.txt"
+ls -la "$demo_dir"
+cat "$demo_dir/catatan.txt"
+printf 'Folder demo: %s\\n' "$demo_dir"`}</Code>
+      <div style={{ display: "flex", flexDirection: "column", gap: 22 }}>
+        <Body>
+          `mktemp -d` membuat direktori unik di `/tmp`. Jalankan semua baris
+          dalam sesi shell yang sama agar `demo_dir` tetap tersedia.
+        </Body>
+        <Body>
+          Expected: satu file `catatan.txt`; `cat` menampilkan “Halo dari VPS”.
+          Catat path yang tercetak untuk pembersihan.
+        </Body>
+        <Body>
+          Jika gagal menulis, periksa nilai `demo_dir` dan izin folder. Jangan
+          beralih ke direktori aplikasi yang sedang berjalan.
+        </Body>
+      </div>
+    </div>
+  </Shell>
+);
+
+const PrepOnePorts: Page = () => (
+  <Shell>
+    <Eyebrow>Mentor Prep · Pertemuan 1 · 10 · Proses dan port</Eyebrow>
+    <Heading size={68}>Hubungkan proses dengan port yang mendengarkan</Heading>
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns: "0.9fr 1.1fr",
+        gap: 48,
+        marginTop: 42,
+        alignItems: "start",
+      }}
+    >
+      <Code size={25}>{`ps -ef | head
+ss -ltn
+ss -ltnp`}</Code>
+      <div style={{ display: "flex", flexDirection: "column", gap: 22 }}>
+        <Body>
+          `ps` menunjukkan proses; `ss` menunjukkan alamat dan port TCP yang
+          sedang listen. Cari port SSH yang dipakai untuk masuk.
+        </Body>
+        <Body>
+          Expected: ada baris `LISTEN` untuk port SSH. Detail proses pada `ss
+          -ltnp` bisa kosong tanpa hak yang cukup.
+        </Body>
+        <Body>
+          Bedakan `127.0.0.1`, alamat jaringan, dan `0.0.0.0`. Baris listen
+          sendiri belum membuktikan port bisa diakses dari internet.
+        </Body>
+      </div>
+    </div>
+  </Shell>
+);
+
+const PrepOneUfwInspect: Page = () => (
+  <Shell>
+    <Eyebrow>Mentor Prep · Pertemuan 1 · 11 · Firewall live</Eyebrow>
+    <Heading size={68}>Periksa UFW tanpa mengubah aturan</Heading>
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns: "0.95fr 1.05fr",
+        gap: 48,
+        marginTop: 42,
+        alignItems: "start",
+      }}
+    >
+      <Code size={24}>{`command -v ufw
+sudo ufw status verbose
+sudo ufw status numbered`}</Code>
+      <div style={{ display: "flex", flexDirection: "column", gap: 22 }}>
+        <Body>
+          Expected: UFW menampilkan `Status: active` beserta aturan, atau
+          `Status: inactive`. Jika perintah tidak ada, jangan menganggap server
+          tanpa firewall; cek mekanisme yang dipakai provider.
+        </Body>
+        <Body>
+          Bandingkan port SSH yang terlihat di `ss` dengan aturan yang
+          ditampilkan. `sudo` mungkin meminta password akun mentor.
+        </Body>
+        <div style={{ padding: 24, background: colors.silk }}>
+          <Label>Batas demo live</Label>
+          <Body style={{ marginTop: 10 }}>
+            Tidak menjalankan `ufw allow`, `deny`, `delete`, `enable`, atau
+            `reset` pada VPS yang sedang dipakai.
+          </Body>
+        </div>
+      </div>
+    </div>
+  </Shell>
+);
+
+const PrepOneUfwLab: Page = () => (
+  <Shell>
+    <Eyebrow>Mentor Prep · Pertemuan 1 · 12 · Simulasi saja</Eyebrow>
+    <Heading size={68}>Urutan aman untuk VPS latihan yang terpisah</Heading>
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns: "1.05fr 0.95fr",
+        gap: 44,
+        marginTop: 38,
+        alignItems: "start",
+      }}
+    >
+      <Code size={21}>{`# KHUSUS VPS LATIHAN; jangan jalankan di VPS live
+# 1. Buka console pemulihan provider.
+# 2. Pastikan port SSH aktual dan sesi aktif.
+SSH_PORT="<PORT_SSH>" # ganti sebelum menjalankan
+sudo ufw allow "$SSH_PORT/tcp"
+sudo ufw enable
+sudo ufw status verbose
+# 3. Buka sesi SSH kedua untuk menguji akses.
+# 4. Baru pertimbangkan aturan port aplikasi.`}</Code>
+      <div style={{ display: "flex", flexDirection: "column", gap: 22 }}>
+        <Body>
+          Ganti placeholder dengan port SSH yang diverifikasi pada VPS latihan.
+          Perintah di kiri adalah urutan konsep, bukan skrip untuk ditempel ke
+          server yang dipakai layanan.
+        </Body>
+        <Body>
+          Expected: aturan SSH muncul dan sesi kedua bisa login. Jika sesi kedua
+          gagal, gunakan console provider untuk memulihkan akses.
+        </Body>
+        <Body>
+          Firewall provider dan UFW adalah lapisan berbeda. Hasil salah satu
+          tidak membuktikan konfigurasi lapisan lainnya.
+        </Body>
+      </div>
+    </div>
+  </Shell>
+);
+
+const PrepOneTroubleshoot: Page = () => (
+  <Shell>
+    <Eyebrow>Mentor Prep · Pertemuan 1 · 13 · Diagnosis</Eyebrow>
+    <Heading size={68}>Baca gejala sebelum menyentuh konfigurasi</Heading>
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns: "1fr 1fr",
+        gap: 42,
+        marginTop: 40,
+        alignItems: "start",
+      }}
+    >
+      <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+        <div style={{ padding: 22, background: colors.silk }}>
+          <Label>Permission denied (publickey)</Label>
+          <Body style={{ marginTop: 8 }}>
+            Periksa user, path key, dan apakah public key yang sesuai sudah
+            diberi akses.
+          </Body>
+        </div>
+        <div style={{ padding: 22, background: colors.silk }}>
+          <Label>Connection timed out</Label>
+          <Body style={{ marginTop: 8 }}>
+            Periksa host, port, jaringan, dan aturan firewall dari jalur
+            pemulihan; jangan menebak dengan mengubah UFW.
+          </Body>
+        </div>
+      </div>
+      <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+        <div style={{ padding: 22, background: colors.silk }}>
+          <Label>Connection refused</Label>
+          <Body style={{ marginTop: 8 }}>
+            Host terjangkau tetapi tidak ada listener pada port tujuan, atau
+            koneksi ditolak oleh konfigurasi jaringan.
+          </Body>
+        </div>
+        <div style={{ padding: 22, background: colors.silk }}>
+          <Label>UFW inactive atau tidak ada</Label>
+          <Body style={{ marginTop: 8 }}>
+            Jelaskan hasil yang terlihat. Jangan aktifkan atau install UFW
+            sebagai improvisasi di server ini.
+          </Body>
+        </div>
+      </div>
+    </div>
+  </Shell>
+);
+
+const PrepOneCleanup: Page = () => (
+  <Shell>
+    <Eyebrow>Mentor Prep · Pertemuan 1 · 14 · Pembersihan</Eyebrow>
+    <Heading size={68}>Hapus hanya file dan folder yang dibuat demo</Heading>
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns: "1.05fr 0.95fr",
+        gap: 44,
+        marginTop: 42,
+        alignItems: "start",
+      }}
+    >
+      <Code size={22}>{`printf '%s\\n' "$demo_dir"
+case "$demo_dir" in
+  /tmp/mentor-cli.*)
+    ls -la "$demo_dir"
+    rm -- "$demo_dir/catatan.txt"
+    rmdir -- "$demo_dir" && echo 'Demo bersih' ;;
+  *) echo 'Path demo tidak valid; stop' ;;
+esac`}</Code>
+      <div style={{ display: "flex", flexDirection: "column", gap: 22 }}>
+        <Body>
+          Jalankan di shell yang sama dengan latihan file. Pastikan path
+          tercetak diawali `/tmp/mentor-cli.` dan isinya hanya file demo.
+        </Body>
+        <Body>
+          Expected: `rmdir` berhasil dan muncul “Demo bersih”. Jika folder masih
+          berisi file lain, berhenti dan periksa dulu; jangan memakai
+          penghapusan rekursif.
+        </Body>
+        <Body>
+          Setelah selesai, keluar dengan `exit`. Sesi SSH cadangan boleh ditutup
+          setelah akses dinyatakan tetap berfungsi.
+        </Body>
+      </div>
+    </div>
+  </Shell>
+);
+
+const PrepOneRunOfShow: Page = () => (
+  <Shell>
+    <Eyebrow>Mentor Prep · Pertemuan 1 · Penutup appendix</Eyebrow>
+    <Heading size={68}>Checklist praktikum sebelum mengajar</Heading>
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns: "1fr 1fr",
+        gap: 44,
+        marginTop: 38,
+        alignItems: "start",
+      }}
+    >
+      <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+        <Body>1. Isi placeholder; cek atau buat key di Mac.</Body>
+        <Body>2. Verifikasi host, pasang public key, uji sesi kedua.</Body>
+        <Body>3. Jalankan CLI dan latihan file di `/tmp`.</Body>
+        <Body>4. Inspeksi port/UFW, bersihkan folder demo.</Body>
+      </div>
+      <div style={{ padding: 30, background: colors.silk }}>
+        <Label>Saat kelas</Label>
+        <Body style={{ marginTop: 14 }}>
+          Minta peserta memprediksi hasil `pwd`, `cat`, dan `ss` sebelum output
+          ditampilkan. Mereka dapat mencoba CLI aman di terminal sendiri; mereka
+          tidak perlu akses ke VPS mentor.
+        </Body>
+        <Body style={{ marginTop: 22 }}>
+          Jika waktu sempit, key harus sudah terpasang sebelum kelas.
+          Pertahankan SSH → CLI → port/UFW → cleanup. Konfigurasi UFW cukup
+          dijelaskan dari slide simulasi.
+        </Body>
+      </div>
+    </div>
+  </Shell>
+);
+
 export const meta: SlideMeta = {
   title: "Pertemuan 2 · Docker dan Containerization",
   createdAt: "2026-09-27T14:25:26.829Z",
@@ -2575,4 +3305,23 @@ export default [
   PrepTroubleshoot,
   PrepExercise,
   PrepRunOfShow,
+  PrepOneDivider,
+  PrepOneKeyModel,
+  PrepOnePasswordFlow,
+  PrepOnePreflight,
+  PrepOneKeyCheck,
+  PrepOneKeyGenerate,
+  PrepOneKeyStore,
+  PrepOneHostVerify,
+  PrepOneKeyInstall,
+  PrepOneConnect,
+  PrepOneKeyRecovery,
+  PrepOneNavigate,
+  PrepOneScratch,
+  PrepOnePorts,
+  PrepOneUfwInspect,
+  PrepOneUfwLab,
+  PrepOneTroubleshoot,
+  PrepOneCleanup,
+  PrepOneRunOfShow,
 ] satisfies Page[];
