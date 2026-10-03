@@ -1,0 +1,15 @@
+{
+  "name": "api-kelas",
+  "version": "1.0.0",
+  "private": true,
+  "description": "API Express kecil untuk praktikum Docker Backend Intermediate",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "express": "5.2.1"
+  }
+}
