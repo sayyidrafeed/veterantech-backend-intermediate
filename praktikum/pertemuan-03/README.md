@@ -20,7 +20,8 @@ Expected: path berakhir dengan `praktikum/pertemuan-03`. Semua command laptop me
 | Sebelum kelas | [Dockerfile](./dockerfile/demo.md), bagian persiapan | Docker Engine siap, image/dependency siap, port kosong |
 | Demo SSH · 15 menit | [Demo SSH](./ssh/demo.md) | Login, buktikan identitas server, CLI dan inspeksi port |
 | Demo Dockerfile · 20 menit | [Demo Dockerfile](./dockerfile/demo.md) | Ketik Dockerfile, build image, run container, rebuild |
-| Demo Compose · 35 menit | Menyusul; belum disiapkan dalam paket ini | Backend + database, networking, dan persistensi |
+| Demo Compose · 35 menit | [Demo Compose](./compose/demo.md) | API catatan + PostgreSQL, networking, persistensi, dan recovery |
+| Tambahan Compose · sekitar 15 menit | [Next.js + multi-stage](./compose/demo-web.md) | Tampilan catatan, tiga service, dan image standalone dari tiga stage build |
 
 Slot lain dari 120 menit: recall 10 menit, konsep Compose/YAML 15 menit, cek pemahaman/troubleshooting 10 menit, briefing tugas dan voting 15 menit. Ini panduan alokasi, bukan jadwal kaku.
 
@@ -29,7 +30,7 @@ Slot lain dari 120 menit: recall 10 menit, konsep Compose/YAML 15 menit, cek pem
 - Copy-paste satu blok command setiap kali. Baca hasilnya sebelum lanjut.
 - Editor dibuka di `dockerfile/starter/`. Dockerfile sengaja belum selesai; checkpoint berada di folder terpisah.
 - Command SSH ditujukan ke akun VPS latihan yang memang boleh dipakai mentor. Mentee tidak perlu mendapat akses ke VPS mentor.
-- Demo Dockerfile berjalan lokal. Jangan pindahkan aturan port lokal langsung ke VPS publik.
+- Demo Dockerfile dan Compose berjalan lokal. Jangan pindahkan aturan port lokal langsung ke VPS publik.
 - Password, private key, passphrase, serta detail akses nyata tidak disimpan di repo. Blok placeholder SSH harus diisi secara lokal.
 - Jangan lakukan pull/build saat kelas tanpa persiapan. Di Mac bersama ini, cek disk dan proses build; sisakan minimal 20 GiB sebelum menjalankan stack Docker demo. [Helper build](./dockerfile/build-image.sh) memeriksa headroom, proses build lain, dan lock `~/.cache/codex-heavy-build.lock` sebelum build; jangan menghapus lock aktif milik sesi lain.
 
@@ -37,7 +38,7 @@ Slot lain dari 120 menit: recall 10 menit, konsep Compose/YAML 15 menit, cek pem
 
 Tugas 1 terpisah dari aplikasi Tugas 2/FP. Pertemuan 3 memberi briefing Tugas 1 dan preview arah FP; briefing resmi Tugas 2/FP di Pertemuan 6. Arsitektur FP dan voting individu/kelompok belum diputuskan di paket ini.
 
-Rafee memilih menyiapkan SSH dan Dockerfile dahulu. Contoh Compose serta dependency database ditunda; template tugas tidak diduplikasi dalam langkah ini.
+Paket Compose menyediakan aplikasi selesai dengan Express 5.2.1 dan `pg`, SQL init, serta override hostname/network untuk diagnosis. Mulai dari persiapan di [runbook Compose](./compose/demo.md); starter Dockerfile tetap untuk live coding. Runtime Docker belum diverifikasi karena headroom disk kurang; lihat [catatan verifikasi](./VERIFIKASI.md). Template tugas tidak diduplikasi dalam langkah ini.
 
 ## Verifikasi paket
 
